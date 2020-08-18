@@ -26,5 +26,4 @@ def univ_town():
     university_towns = pd.DataFrame(state_towns,columns= ['State','RegionName'])
     print(university_towns)
     
-    univ_town()
-    
+    univ_town()  

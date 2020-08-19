@@ -35,6 +35,56 @@ def gdp():
     GDP = GDP.set_index('Quarter')
     #drop all the quarters before 2000
     GDP = GDP.loc['2000q1':,:]
+    print(GDP)
+
+gdp()
+
+def convert_quarterly_data():
+    quarterly_data = (pd.readcsv('City_Zhvi_AllHomes.csv').drop(['RegionID','Metro','CountyName','SizeRank'],axis=1)
+                        .sort_values(['State','RegionName'],ascending=[True,True]))
+    quarterly_data.set_index(['State','RegionName'],inplace=True)
+    quarterly_data.drop(quarterly_data.columns[0:45],axis=1,inplace=True)                 
+    quarterly_data = quarterly_data.groupby(pd.PeriodIndex(quarterly_data.columns,freq='Q'),axis=1).mean()
+    print(quarterly_data)
     
-   
+convert_quarterly_data()
+          
+def run_ttest():
+    hd = convert_housing_data_to_quarters().iloc[:,33:38]
+    hd.columns =hd.columns.to_series().astype(str)
+    hd = hd.reset_index().dropna()
+    
+    university_towns = get_list_of_university_towns()
+    univtowns = university_towns['RegionName'].tolist()
+    non_univtowns = hd['RegionName'].tolist()
+    #check if the town is a university town or not
+    hd['UnivTown'] = hd.RegionName.isin(univtowns)
+    
+    #get the column of mean values
+    Univ = hd.where(hd['UnivTown'] == True).dropna().drop(['UnivTown'],axis=1)
+    Univ['Mean'] = Univ.mean(axis=1)
+    NotUniv = hd.where(hd['UnivTown'] == False).dropna().drop(['UnivTown'],axis=1)
+    NotUniv['Mean'] = NotUniv.mean(axis=1)
+    
+    #get a mean of the column for each dataframe
+    ValUniv = Univ['Mean'].mean()
+    ValNotUniv = NotUniv['Mean'].mean()
+    Univ = Univ['Mean']
+    NotUniv = NotUniv['Mean']
+    
+    #compare to see what is better
+    if ValUniv < ValNotUniv:
+         better='university town'
+    else:
+         better='mon-university town'
+    
+    better
+    p = list(ttest_ind(Univ, NotUniv))[1]
+    
+    if p<0.01:
+        final = (True,p,better)
+    else:
+        final = (False,p,better)
+    print(final)
+run_ttest()
            

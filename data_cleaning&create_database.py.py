@@ -26,4 +26,15 @@ def univ_town():
     university_towns = pd.DataFrame(state_towns,columns= ['State','RegionName'])
     print(university_towns)
     
-    univ_town()  
+univ_town()  
+      
+def gdp():
+    GDP = (pd.read_excel('gdplev.xls',skiprows = 7').rename(columns={'Unnamed: 4':'Quarter','Unnamed: 5':'GDP','Unnamed: 6':'GDP2009'})
+             .drop(['Unnamed: 0','Unnamed: 1','Unnamed: 2','Unnamed: 3','Unnamed: 7'],axis=1))
+    #set Quarter as index
+    GDP = GDP.set_index('Quarter')
+    #drop all the quarters before 2000
+    GDP = GDP.loc['2000q1':,:]
+    
+   
+           

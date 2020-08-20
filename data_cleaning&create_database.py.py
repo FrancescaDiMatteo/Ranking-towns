@@ -27,7 +27,8 @@ def univ_town():
     print(university_towns)
     
 univ_town()  
-      
+
+#GDP table is needed to evaluate when the recession starts and ends after 2000, which will be needed to understand which towns will have higher impact during recession
 def gdp():
     GDP = (pd.read_excel('gdplev.xls',skiprows = 7').rename(columns={'Unnamed: 4':'Quarter','Unnamed: 5':'GDP','Unnamed: 6':'GDP2009'})
              .drop(['Unnamed: 0','Unnamed: 1','Unnamed: 2','Unnamed: 3','Unnamed: 7'],axis=1))
@@ -36,9 +37,13 @@ def gdp():
     #drop all the quarters before 2000
     GDP = GDP.loc['2000q1':,:]
     print(GDP)
-
 gdp()
+           
+def recession_start():
+    
+           
 
+#The City_Zhvi_AllHomes file has the data for each non university town     
 def convert_quarterly_data():
     quarterly_data = (pd.readcsv('City_Zhvi_AllHomes.csv').drop(['RegionID','Metro','CountyName','SizeRank'],axis=1)
                         .sort_values(['State','RegionName'],ascending=[True,True]))
